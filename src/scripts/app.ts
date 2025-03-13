@@ -1547,6 +1547,7 @@ export class ComfyApp {
           // @ts-expect-error fixme ts strict error
           let toSlot = node.inputs?.findIndex((inp) => inp.name === input)
           if (toSlot == null || toSlot === -1) {
+<<<<<<< HEAD
             try {
               // Target has no matching input, most likely a converted widget
               // @ts-expect-error fixme ts strict error
@@ -1557,6 +1558,16 @@ export class ComfyApp {
                 toSlot = node.inputs?.length - 1
               }
             } catch (error) {}
+=======
+            // try {
+            //   // Target has no matching input, most likely a converted widget
+            //   const widget = node.widgets?.find((w) => w.name === input)
+            //   // @ts-expect-error
+            //   if (widget && node.convertWidgetToInput?.(widget)) {
+            //     toSlot = node.inputs?.length - 1
+            //   }
+            // } catch (error) {}
+>>>>>>> 0a4e701c (Remove conversion logic)
           }
           if (toSlot != null || toSlot !== -1) {
             // @ts-expect-error fixme ts strict error
@@ -1585,16 +1596,14 @@ export class ComfyApp {
           // @ts-expect-error fixme ts strict error
           let toSlot = node.inputs?.findIndex((inp) => inp.name === input)
           if (toSlot == null || toSlot === -1) {
-            try {
-              // Target has no matching input, most likely a converted widget
-              // @ts-expect-error fixme ts strict error
-              const widget = node.widgets?.find((w) => w.name === input)
-              // @ts-expect-error
-              if (widget && node.convertWidgetToInput?.(widget)) {
-                // @ts-expect-error fixme ts strict error
-                toSlot = node.inputs?.length - 1
-              }
-            } catch (error) {}
+            // try {
+            //   // Target has no matching input, most likely a converted widget
+            //   const widget = node.widgets?.find((w) => w.name === input)
+            //   // @ts-expect-error
+            //   if (widget && node.convertWidgetToInput?.(widget)) {
+            //     toSlot = node.inputs?.length - 1
+            //   }
+            // } catch (error) {}
           }
           if (toSlot != null || toSlot !== -1) {
             // @ts-expect-error fixme ts strict error
