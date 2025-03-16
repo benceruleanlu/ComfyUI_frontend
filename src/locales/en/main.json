@@ -963,5 +963,11 @@
     "light": "Light",
     "switchingMaterialMode": "Switching Material Mode...",
     "edgeThreshold": "Edge Threshold"
+  },
+  "importModelDialog": {
+    "title": "Import Model",
+    "type": "Type",
+    "move": "Move",
+    "copy": "Copy"
   }
 }

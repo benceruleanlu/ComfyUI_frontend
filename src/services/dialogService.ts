@@ -1,5 +1,6 @@
 import ConfirmationDialogContent from '@/components/dialog/content/ConfirmationDialogContent.vue'
 import ExecutionErrorDialogContent from '@/components/dialog/content/ExecutionErrorDialogContent.vue'
+import ImportModelDialogContent from '@/components/dialog/content/ImportModelDialogContent.vue'
 import IssueReportDialogContent from '@/components/dialog/content/IssueReportDialogContent.vue'
 import LoadWorkflowWarning from '@/components/dialog/content/LoadWorkflowWarning.vue'
 import MissingModelsWarning from '@/components/dialog/content/MissingModelsWarning.vue'
@@ -194,6 +195,16 @@ export const useDialogService = () => {
     })
   }
 
+  function showImportModelDialog(
+    props: InstanceType<typeof ImportModelDialogContent>['$props']
+  ) {
+    dialogStore.showDialog({
+      key: 'global-import-model',
+      component: ImportModelDialogContent,
+      props
+    })
+  }
+
   return {
     showLoadWorkflowWarning,
     showMissingModelsWarning,
@@ -203,6 +214,7 @@ export const useDialogService = () => {
     showTemplateWorkflowsDialog,
     showIssueReportDialog,
     showManagerDialog,
+    showImportModelDialog,
     prompt,
     confirm
   }
