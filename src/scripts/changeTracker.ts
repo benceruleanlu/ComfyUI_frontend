@@ -91,17 +91,29 @@ export class ChangeTracker {
     // `this.workflow` is not reactive.
     const workflow = useWorkflowStore().getWorkflowByPath(this.workflow.path)
     if (workflow) {
-      workflow.isModified = !ChangeTracker.graphEqual(
-        this.initialState,
-        this.activeState
-      )
-      if (logger.getLevel() <= logger.levels.DEBUG && workflow.isModified) {
-        const diff = ChangeTracker.graphDiff(
-          this.initialState,
-          this.activeState
-        )
-        logger.debug('Graph diff:', diff)
-      }
+      this.checkModified(workflow)
+    }
+  }
+
+  /**
+   * Explicitly checks if the workflow is modified and updates its state.
+   * This can be called when a tab is opened to ensure isModified is properly set.
+   */
+  checkModified(workflow: ComfyWorkflow) {
+    // Always use the content (saved state) as the source of truth if the workflow is persisted
+    // This fixes the issue with reopening tabs, where initialState gets reset
+    const savedState =
+      workflow.isPersisted && workflow.content
+        ? JSON.parse(workflow.content)
+        : this.initialState
+
+    workflow.isModified = !ChangeTracker.graphEqual(
+      savedState,
+      this.activeState
+    )
+    if (logger.getLevel() <= logger.levels.DEBUG && workflow.isModified) {
+      const diff = ChangeTracker.graphDiff(savedState, this.activeState)
+      logger.debug('Graph diff:', diff)
     }
   }
 
@@ -194,6 +206,18 @@ export class ChangeTracker {
     const checkState = () => getCurrentChangeTracker()?.checkState()
 
     ChangeTracker.app = app
+
+    // Patch the ComfyWorkflow.load method to check if the workflow is modified
+    // when it's loaded from storage
+    const originalLoad = ComfyWorkflow.prototype.load
+    ComfyWorkflow.prototype.load = async function (...args) {
+      const workflow = await originalLoad.apply(this, args)
+      // After loading, check if the workflow is modified
+      if (workflow.changeTracker) {
+        workflow.changeTracker.checkModified(workflow)
+      }
+      return workflow
+    }
 
     let keyIgnored = false
     window.addEventListener(

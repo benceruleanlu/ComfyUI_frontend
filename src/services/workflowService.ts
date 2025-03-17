@@ -4,7 +4,9 @@ import { toRaw } from 'vue'
 
 import { t } from '@/i18n'
 import { ComfyWorkflowJSON } from '@/schemas/comfyWorkflowSchema'
+import { api } from '@/scripts/api'
 import { app } from '@/scripts/app'
+import { ChangeTracker } from '@/scripts/changeTracker'
 import { blankGraph, defaultGraph } from '@/scripts/defaultGraph'
 import { downloadBlob } from '@/scripts/utils'
 import { useSettingStore } from '@/stores/settingStore'
@@ -295,6 +297,25 @@ export const useWorkflowService = () => {
         const loadedWorkflow = await workflowStore.openWorkflow(workflow)
         loadedWorkflow.changeTracker.restore()
         loadedWorkflow.changeTracker.reset(workflowData)
+
+        // Check if the current workflow state is different from what's stored on the server
+        try {
+          const resp = await api.getUserData(loadedWorkflow.path)
+          if (resp.status === 200) {
+            const serverContent = await resp.text()
+            // Always check against server-side content (saved state)
+            if (loadedWorkflow.changeTracker) {
+              const serverGraph = JSON.parse(serverContent)
+              loadedWorkflow.isModified = !ChangeTracker.graphEqual(
+                serverGraph,
+                workflowData
+              )
+            }
+          }
+        } catch (err) {
+          console.error('Error checking workflow modification state:', err)
+        }
+
         return
       }
     }
