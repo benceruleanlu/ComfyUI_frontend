@@ -1333,7 +1333,7 @@ export class ComfyApp {
     if (unhandled) {
       // Nothing handled the event, so show the error dialog
       this.ui.dialog.show(
-        $el('div', [
+        $el('div.unhandled-file-dialog', [
           $el('p', { textContent: `Unable to find workflow in ${file.name}` })
         ]).outerHTML
       )

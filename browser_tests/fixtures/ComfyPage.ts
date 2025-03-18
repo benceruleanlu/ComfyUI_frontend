@@ -13,6 +13,7 @@ import { ComfyActionbar } from '../helpers/actionbar'
 import { ComfyTemplates } from '../helpers/templates'
 import { ComfyMouse } from './ComfyMouse'
 import { ComfyNodeSearchBox } from './components/ComfyNodeSearchBox'
+import { ImportModelDialog } from './components/ImportModelDialog'
 import { SettingDialog } from './components/SettingDialog'
 import {
   NodeLibrarySidebarTab,
@@ -140,6 +141,7 @@ export class ComfyPage {
   public readonly templates: ComfyTemplates
   public readonly settingDialog: SettingDialog
   public readonly confirmDialog: ConfirmDialog
+  public readonly importModelDialog: ImportModelDialog
 
   /** Worker index to test user ID */
   public readonly userIds: string[] = []
@@ -165,6 +167,7 @@ export class ComfyPage {
     this.templates = new ComfyTemplates(page)
     this.settingDialog = new SettingDialog(page)
     this.confirmDialog = new ConfirmDialog(page)
+    this.importModelDialog = new ImportModelDialog(page)
   }
 
   convertLeafToContent(structure: FolderStructure): FolderStructure {
@@ -459,11 +462,11 @@ export class ComfyPage {
     await this.nextFrame()
   }
 
-  async dragAndDropFile(fileName: string) {
+  async dragAndDropFile(fileName: string, buffer?: Buffer) {
     const filePath = this.assetPath(fileName)
 
     // Read the file content
-    const buffer = fs.readFileSync(filePath)
+    buffer ??= fs.readFileSync(filePath)
 
     // Get file type
     const getFileType = (fileName: string) => {
