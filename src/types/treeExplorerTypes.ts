@@ -1,4 +1,5 @@
 import type { MenuItem } from 'primevue/menuitem'
+import type { InjectionKey, ModelRef } from 'vue'
 
 export interface TreeExplorerNode<T = any> {
   key: string
@@ -18,10 +19,10 @@ export interface TreeExplorerNode<T = any> {
   ) => void | Promise<void>
   /** Function to handle deleting the node */
   handleDelete?: (this: TreeExplorerNode<T>) => void | Promise<void>
-  /** Function to handle adding a child node */
-  handleAddChild?: (
+  /** Function to handle adding a folder */
+  handleAddFolder?: (
     this: TreeExplorerNode<T>,
-    child: TreeExplorerNode<T>
+    folderName: string
   ) => void | Promise<void>
   /** Whether the node is draggable */
   draggable?: boolean
@@ -58,9 +59,19 @@ export interface RenderedTreeExplorerNode<T = any> extends TreeExplorerNode<T> {
   totalLeaves: number
   /** Text to display on the leaf-count badge. Empty string means no badge. */
   badgeText?: string
+  /** Whether the node label is currently being edited */
+  isEditingLabel?: boolean
 }
 
 export type TreeExplorerDragAndDropData<T = any> = {
   type: 'tree-explorer-node'
   data: RenderedTreeExplorerNode<T>
 }
+
+export const InjectKeyHandleEditLabelFunction: InjectionKey<
+  (node: RenderedTreeExplorerNode, newName: string) => void
+> = Symbol()
+
+export const InjectKeyExpandedKeys: InjectionKey<
+  ModelRef<Record<string, boolean>>
+> = Symbol()

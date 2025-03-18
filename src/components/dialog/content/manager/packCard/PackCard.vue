@@ -1,68 +1,86 @@
 <template>
   <Card
-    class="absolute inset-0 flex flex-col overflow-hidden rounded-2xl shadow-elevation-4 dark-theme:bg-dark-elevation-1 transition-all duration-200"
+    class="w-full h-full inline-flex flex-col justify-between items-start overflow-hidden rounded-2xl shadow-elevation-3 dark-theme:bg-dark-elevation-2 transition-all duration-200"
     :class="{
-      'outline outline-[6px] outline-[var(--p-primary-color)]': isSelected
+      'outline outline-[6px] outline-[var(--p-primary-color)]': isSelected,
+      'opacity-60': isDisabled
     }"
     :pt="{
-      body: { class: 'p-0 flex flex-col h-full rounded-2xl' },
+      body: { class: 'p-0 flex flex-col w-full h-full rounded-2xl gap-0' },
       content: { class: 'flex-1 flex flex-col rounded-2xl' },
-      title: { class: 'p-0 m-0' },
+      title: {
+        class:
+          'self-stretch w-full px-4 py-3 inline-flex justify-start items-center gap-6'
+      },
       footer: { class: 'p-0 m-0' }
     }"
   >
     <template #title>
-      <div class="flex justify-between p-5 pb-1 align-middle text-sm">
-        <span class="flex items-start mt-2">
-          <i
-            class="pi pi-box text-muted text-2xl ml-1 mr-5"
-            style="opacity: 0.5"
-          />
-          <span class="text-lg relative top-[.25rem]">{{
-            $t('manager.nodePack')
-          }}</span>
-        </span>
-        <div class="flex items-center gap-2.5">
-          <div
-            v-if="nodePack.downloads"
-            class="flex items-center text-sm text-muted tracking-tighter"
-          >
-            <i class="pi pi-download mr-2" />
-            {{ $n(nodePack.downloads) }}
-          </div>
-          <template v-if="isPackInstalled">
-            <PackEnableToggle :node-pack="nodePack" />
-          </template>
-          <template v-else>
-            <PackInstallButton :node-packs="[nodePack]" />
-          </template>
-        </div>
-      </div>
+      <PackCardHeader :node-pack="nodePack" />
     </template>
     <template #content>
       <ContentDivider />
-      <div class="flex flex-1 p-5 mt-3 cursor-pointer">
-        <div class="flex-shrink-0 mr-4">
-          <PackIcon :node-pack="nodePack" />
-        </div>
-        <div class="flex flex-col flex-1 min-w-0">
-          <span
-            class="text-lg font-bold pb-4 truncate overflow-hidden text-ellipsis"
-            :title="nodePack.name"
+      <template v-if="isInstalling">
+        <div
+          class="self-stretch inline-flex flex-col justify-center items-center gap-2 h-full"
+        >
+          <ProgressSpinner />
+          <div
+            class="self-stretch text-center justify-start text-sm font-medium leading-none"
           >
-            {{ nodePack.name }}
-          </span>
-          <div class="flex-1">
-            <p
-              v-if="nodePack.description"
-              class="text-sm text-color-secondary m-0 line-clamp-3 overflow-hidden"
-              :title="nodePack.description"
-            >
-              {{ nodePack.description }}
-            </p>
+            {{ $t('g.installing') }}...
           </div>
         </div>
-      </div>
+      </template>
+      <template v-else>
+        <div
+          class="self-stretch px-4 py-3 inline-flex justify-start items-start cursor-pointer"
+        >
+          <PackIcon :node-pack="nodePack" />
+          <div
+            class="px-4 inline-flex flex-col justify-start items-start overflow-hidden"
+          >
+            <span
+              class="text-sm font-bold truncate overflow-hidden text-ellipsis"
+              :title="nodePack.name"
+            >
+              {{ nodePack.name }}
+            </span>
+            <div
+              class="self-stretch inline-flex justify-center items-center gap-2.5"
+            >
+              <p
+                v-if="nodePack.description"
+                class="flex-1 justify-start text-muted text-sm font-medium leading-3 break-words overflow-hidden min-h-12 line-clamp-3"
+                :title="nodePack.description"
+              >
+                {{ nodePack.description }}
+              </p>
+            </div>
+            <div
+              class="self-stretch inline-flex justify-start items-center gap-2"
+            >
+              <div
+                v-if="nodesCount"
+                class="px-2 py-1 flex justify-center text-sm items-center gap-1"
+              >
+                <div class="text-center justify-center font-medium leading-3">
+                  {{ nodesCount }} {{ $t('g.nodes') }}
+                </div>
+              </div>
+              <div class="px-2 py-1 flex justify-center items-center gap-1">
+                <div
+                  v-if="isUpdateAvailable"
+                  class="w-4 h-4 relative overflow-hidden"
+                >
+                  <i class="pi pi-arrow-circle-up text-blue-600" />
+                </div>
+                <PackVersionBadge :node-pack="nodePack" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
     </template>
     <template #footer>
       <ContentDivider :width="0.1" />
@@ -72,25 +90,52 @@
 </template>
 
 <script setup lang="ts">
+import { whenever } from '@vueuse/core'
 import Card from 'primevue/card'
-import { computed } from 'vue'
+import ProgressSpinner from 'primevue/progressspinner'
+import { computed, provide, ref } from 'vue'
 
 import ContentDivider from '@/components/common/ContentDivider.vue'
-import PackEnableToggle from '@/components/dialog/content/manager/button/PackEnableToggle.vue'
-import PackInstallButton from '@/components/dialog/content/manager/button/PackInstallButton.vue'
+import PackVersionBadge from '@/components/dialog/content/manager/PackVersionBadge.vue'
 import PackCardFooter from '@/components/dialog/content/manager/packCard/PackCardFooter.vue'
 import PackIcon from '@/components/dialog/content/manager/packIcon/PackIcon.vue'
 import { useComfyManagerStore } from '@/stores/comfyManagerStore'
+import { IsInstallingKey } from '@/types/comfyManagerTypes'
 import type { components } from '@/types/comfyRegistryTypes'
+import { compareVersions, isSemVer } from '@/utils/formatUtil'
 
 const { nodePack, isSelected = false } = defineProps<{
   nodePack: components['schemas']['Node']
   isSelected?: boolean
 }>()
 
-const managerStore = useComfyManagerStore()
+const isInstalling = ref(false)
+provide(IsInstallingKey, isInstalling)
 
-const isPackInstalled = computed(() =>
-  managerStore.isPackInstalled(nodePack?.id)
+const { isPackInstalled, isPackEnabled, getInstalledPackVersion } =
+  useComfyManagerStore()
+
+const isInstalled = computed(() => isPackInstalled(nodePack?.id))
+const isDisabled = computed(
+  () => isInstalled.value && !isPackEnabled(nodePack?.id)
 )
+
+whenever(isInstalled, () => (isInstalling.value = false))
+
+const isUpdateAvailable = computed(() => {
+  if (!isInstalled.value) return false
+
+  const latestVersion = nodePack.latest_version?.version
+  if (!latestVersion) return false
+
+  const installedVersion = getInstalledPackVersion(nodePack.id ?? '')
+
+  // Don't attempt to show update available for nightly GitHub packs
+  if (installedVersion && !isSemVer(installedVersion)) return false
+
+  return compareVersions(latestVersion, installedVersion) > 0
+})
+
+// TODO: remove type assertion once comfy_nodes is added to node (pack) info type in backend
+const nodesCount = computed(() => (nodePack as any).comfy_nodes?.length)
 </script>

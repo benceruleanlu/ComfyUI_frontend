@@ -2,7 +2,7 @@
   <TreeExplorer
     class="node-lib-bookmark-tree-explorer"
     ref="treeExplorerRef"
-    :roots="renderedBookmarkedRoot.children"
+    :root="renderedBookmarkedRoot"
     :expandedKeys="expandedKeys"
   >
     <template #folder="{ node }">
@@ -40,7 +40,6 @@ import type {
   TreeExplorerDragAndDropData,
   TreeExplorerNode
 } from '@/types/treeExplorerTypes'
-import { findNodeByKey } from '@/utils/treeUtil'
 
 const props = defineProps<{
   filteredNodeDefs: ComfyNodeDefImpl[]
@@ -95,17 +94,11 @@ const extraMenuItems = (
   menuTargetNode: RenderedTreeExplorerNode<ComfyNodeDefImpl>
 ) => [
   {
-    label: t('g.newFolder'),
-    icon: 'pi pi-folder-plus',
-    command: () => {
-      addNewBookmarkFolder(menuTargetNode)
-    },
-    visible: !menuTargetNode?.leaf
-  },
-  {
     label: t('g.customize'),
     icon: 'pi pi-palette',
     command: () => {
+      if (!menuTargetNode.data) return
+
       const customization =
         nodeBookmarkStore.bookmarksCustomization[menuTargetNode.data.nodePath]
       initialIcon.value =
@@ -152,6 +145,11 @@ const renderedBookmarkedRoot = computed<TreeExplorerNode<ComfyNodeDefImpl>>(
         },
         children: sortedChildren,
         draggable: node.leaf,
+        handleAddFolder(newName: string) {
+          if (newName !== '') {
+            nodeBookmarkStore.addNewBookmarkFolder(this.data, newName)
+          }
+        },
         renderDragPreview(container) {
           const vnode = h(NodePreview, { nodeDef: node.data })
           render(vnode, container)
@@ -197,25 +195,8 @@ const renderedBookmarkedRoot = computed<TreeExplorerNode<ComfyNodeDefImpl>>(
 )
 
 const treeExplorerRef = ref<InstanceType<typeof TreeExplorer> | null>(null)
-const addNewBookmarkFolder = (
-  parent?: RenderedTreeExplorerNode<ComfyNodeDefImpl>
-) => {
-  const newFolderKey =
-    'root/' + nodeBookmarkStore.addNewBookmarkFolder(parent?.data).slice(0, -1)
-  nextTick(() => {
-    treeExplorerRef.value?.renameCommand(
-      findNodeByKey(
-        renderedBookmarkedRoot.value,
-        newFolderKey
-      ) as RenderedTreeExplorerNode
-    )
-    if (parent) {
-      expandedKeys.value[parent.key] = true
-    }
-  })
-}
 defineExpose({
-  addNewBookmarkFolder
+  addNewBookmarkFolder: () => treeExplorerRef.value?.addFolderCommand('root')
 })
 
 const showCustomizationDialog = ref(false)

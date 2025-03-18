@@ -188,6 +188,7 @@
     "reportSent": "报告已提交",
     "reset": "重置",
     "resetKeybindingsTooltip": "将快捷键重置为默认",
+    "restart": "重新启动",
     "resultsCount": "找到 {count} 个结果",
     "save": "保存",
     "saving": "正在保存",
@@ -272,6 +273,7 @@
     "installLocationDescription": "选择 ComfyUI 用户数据的存放目录。将安装一个 Python 环境到所选位置。请确保所选磁盘有足够的空间（约 15GB）。",
     "installLocationTooltip": "ComfyUI 的用户数据目录。存储：\n- Python 环境\n- 模型\n- 自定义节点\n",
     "insufficientFreeSpace": "空间不足 - 最小可用空间",
+    "isOneDrive": "在OneDrive中安装可能会导致问题。强烈建议在非OneDrive位置安装。",
     "manualConfiguration": {
       "createVenv": "您需要在以下目录中创建虚拟环境",
       "requirements": "依赖项",
@@ -286,6 +288,7 @@
     "migrationOptional": "迁移是可选的。如果您之前没有安装过 ComfyUI，可以跳过此步骤。",
     "migrationSourcePathDescription": "如果您已有现有的ComfyUI安装，我们可以复制/链接您现有的用户文件和模型到新的安装。您现有的ComfyUI安装将不会受到影响。",
     "moreInfo": "有关更多信息，请阅读我们的",
+    "nonDefaultDrive": "请在您的系统驱动器上安装ComfyUI（例如C:\\）。具有不同文件系统的驱动器可能会导致不可预测的问题。安装后，模型和其他文件可以存储在其他驱动器上。",
     "parentMissing": "路径不存在 - 请先创建包含该路径的目录",
     "pathExists": "目录已存在 - 请确保您已备份全部数据",
     "pathValidationFailed": "路径验证失败",
@@ -384,6 +387,7 @@
   },
   "manager": {
     "createdBy": "创建者",
+    "dependencies": "依赖关系",
     "discoverCommunityContent": "发现社区制作的节点包，扩展等等...",
     "downloads": "下载",
     "errorConnecting": "连接到Comfy节点注册表时出错。",
@@ -392,6 +396,7 @@
       "enabled": "已启用",
       "nodePack": "节点包"
     },
+    "infoPanelEmpty": "点击一个项目查看信息",
     "installSelected": "安装选定",
     "lastUpdated": "最后更新",
     "latestVersion": "最新",
@@ -403,6 +408,7 @@
     "nodePack": "节点包",
     "packsSelected": "选定的包",
     "repository": "仓库",
+    "restartToApplyChanges": "要应用更改，请重新启动ComfyUI",
     "searchPlaceholder": "搜索",
     "selectVersion": "选择版本",
     "sort": {
@@ -536,6 +542,7 @@
     "Toggle Logs Bottom Panel": "切换日志底部面板",
     "Toggle Model Library Sidebar": "切换模型库侧边栏",
     "Toggle Node Library Sidebar": "切换节点库侧边栏",
+    "Toggle Progress Dialog": "切换进度对话框",
     "Toggle Queue Sidebar": "切换队列侧边栏",
     "Toggle Search Box": "切换搜索框",
     "Toggle Terminal Bottom Panel": "切换终端底部面板",

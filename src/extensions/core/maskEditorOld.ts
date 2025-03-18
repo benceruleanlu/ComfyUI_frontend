@@ -18,24 +18,8 @@ function dataURLToBlob(dataURL) {
   return new Blob([arrayBuffer], { type: contentType })
 }
 
-function loadedImageToBlob(image) {
-  const canvas = document.createElement('canvas')
-
-  canvas.width = image.width
-  canvas.height = image.height
-
-  const ctx = canvas.getContext('2d')
-
-  ctx.drawImage(image, 0, 0)
-
-  const dataURL = canvas.toDataURL('image/png', 1)
-  const blob = dataURLToBlob(dataURL)
-
-  return blob
-}
-
 function loadImage(imagePath) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const image = new Image()
 
     image.onload = function () {
@@ -52,7 +36,6 @@ async function uploadMask(filepath, formData) {
       method: 'POST',
       body: formData
     })
-    .then((response) => {})
     .catch((error) => {
       console.error('Error:', error)
     })
@@ -526,8 +509,6 @@ export class MaskEditorDialogOld extends ComfyDialog {
     maskCtx.clearRect(0, 0, this.maskCanvas.width, this.maskCanvas.height)
 
     // image load
-    const filepath = ComfyApp.clipspace.images
-
     const alpha_url = new URL(
       ComfyApp.clipspace.imgs[ComfyApp.clipspace['selectedIndex']].src
     )
@@ -643,10 +624,10 @@ export class MaskEditorDialogOld extends ComfyDialog {
       maskCanvas.addEventListener('touchmove', (event) =>
         this.draw_move(self, event)
       )
-      maskCanvas.addEventListener('pointerover', (event) => {
+      maskCanvas.addEventListener('pointerover', () => {
         this.brush.style.display = 'block'
       })
-      maskCanvas.addEventListener('pointerleave', (event) => {
+      maskCanvas.addEventListener('pointerleave', () => {
         this.brush.style.display = 'none'
       })
 
@@ -781,7 +762,7 @@ export class MaskEditorDialogOld extends ComfyDialog {
     brush.style.top = centerY - self.brush_size * this.zoom_ratio + 'px'
   }
 
-  handleWheelEvent(self, event) {
+  handleWheelEvent(_, event) {
     event.preventDefault()
 
     if (event.ctrlKey) {

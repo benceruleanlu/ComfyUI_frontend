@@ -188,6 +188,7 @@
     "reportSent": "レポートが送信されました",
     "reset": "リセット",
     "resetKeybindingsTooltip": "キーバインディングをデフォルトにリセット",
+    "restart": "再起動",
     "resultsCount": "{count}件の結果が見つかりました",
     "save": "保存",
     "saving": "保存中",
@@ -272,6 +273,7 @@
     "installLocationDescription": "ComfyUIのユーザーデータを保存するディレクトリを選択してください。Python環境が選択した場所にインストールされます。選択したディスクに約15GBの空き容量が必要です。",
     "installLocationTooltip": "ComfyUIのユーザーデータディレクトリ。保存内容:\n- Python環境\n- モデル\n- カスタムノード\n",
     "insufficientFreeSpace": "空き容量が不足しています - 最低限の空き容量",
+    "isOneDrive": "OneDriveにインストールすると問題が発生する可能性があります。非OneDriveの場所にインストールすることを強くお勧めします。",
     "manualConfiguration": {
       "createVenv": "次のディレクトリに仮想環境を作成する必要があります",
       "requirements": "要件",
@@ -286,6 +288,7 @@
     "migrationOptional": "移行は任意です。既存のインストールがない場合、このステップをスキップできます。",
     "migrationSourcePathDescription": "既存のComfyUIインストールがある場合、既存のユーザーファイルとモデルを新しいインストールにコピー/リンクすることができます。既存のComfyUIインストールは影響を受けません。",
     "moreInfo": "詳しくはこちらをご覧ください",
+    "nonDefaultDrive": "ComfyUIをシステムドライブ（例：C:\\）にインストールしてください。異なるファイルシステムを持つドライブでは、予測不能な問題が発生する可能性があります。インストール後にモデルやその他のファイルを他のドライブに保存することができます。",
     "parentMissing": "パスが存在しません - 最初に含まれるディレクトリを作成してください",
     "pathExists": "ディレクトリはすでに存在します - すべてのデータをバックアップしたことを確認してください",
     "pathValidationFailed": "パスの検証に失敗しました",
@@ -384,6 +387,7 @@
   },
   "manager": {
     "createdBy": "作成者",
+    "dependencies": "依存関係",
     "discoverCommunityContent": "コミュニティが作成したノードパック、拡張機能などを探す...",
     "downloads": "ダウンロード",
     "errorConnecting": "Comfy Node Registryへの接続エラー。",
@@ -392,6 +396,7 @@
       "enabled": "有効",
       "nodePack": "ノードパック"
     },
+    "infoPanelEmpty": "アイテムをクリックして情報を表示します",
     "installSelected": "選択したものをインストール",
     "lastUpdated": "最終更新日",
     "latestVersion": "最新",
@@ -403,6 +408,7 @@
     "nodePack": "ノードパック",
     "packsSelected": "選択したパック",
     "repository": "リポジトリ",
+    "restartToApplyChanges": "変更を適用するには、ComfyUIを再起動してください",
     "searchPlaceholder": "検索",
     "selectVersion": "バージョンを選択",
     "sort": {
@@ -536,6 +542,7 @@
     "Toggle Logs Bottom Panel": "ログパネル下部を切り替え",
     "Toggle Model Library Sidebar": "モデルライブラリサイドバーを切り替え",
     "Toggle Node Library Sidebar": "ノードライブラリサイドバーを切り替え",
+    "Toggle Progress Dialog": "進行状況ダイアログの切り替え",
     "Toggle Queue Sidebar": "キューサイドバーを切り替え",
     "Toggle Search Box": "検索ボックスの切り替え",
     "Toggle Terminal Bottom Panel": "ターミナルパネル下部を切り替え",

@@ -124,21 +124,30 @@ app.registerExtension({
     sceneWidget.serializeValue = async () => {
       node.properties['Camera Info'] = load3d.getCameraState()
 
-      const { scene: imageData, mask: maskData } = await load3d.captureScene(
+      const {
+        scene: imageData,
+        mask: maskData,
+        normal: normalData,
+        lineart: lineartData
+      } = await load3d.captureScene(
         width.value as number,
         height.value as number
       )
 
-      const [data, dataMask] = await Promise.all([
+      const [data, dataMask, dataNormal, dataLineart] = await Promise.all([
         Load3dUtils.uploadTempImage(imageData, 'scene'),
-        Load3dUtils.uploadTempImage(maskData, 'scene_mask')
+        Load3dUtils.uploadTempImage(maskData, 'scene_mask'),
+        Load3dUtils.uploadTempImage(normalData, 'scene_normal'),
+        Load3dUtils.uploadTempImage(lineartData, 'scene_lineart')
       ])
 
       load3d.handleResize()
 
       return {
         image: `threed/${data.name} [temp]`,
-        mask: `threed/${dataMask.name} [temp]`
+        mask: `threed/${dataMask.name} [temp]`,
+        normal: `threed/${dataNormal.name} [temp]`,
+        lineart: `threed/${dataLineart.name} [temp]`
       }
     }
   }
@@ -252,21 +261,27 @@ app.registerExtension({
 
       load3d.toggleAnimation(false)
 
-      const { scene: imageData, mask: maskData } = await load3d.captureScene(
+      const {
+        scene: imageData,
+        mask: maskData,
+        normal: normalData
+      } = await load3d.captureScene(
         width.value as number,
         height.value as number
       )
 
-      const [data, dataMask] = await Promise.all([
+      const [data, dataMask, dataNormal] = await Promise.all([
         Load3dUtils.uploadTempImage(imageData, 'scene'),
-        Load3dUtils.uploadTempImage(maskData, 'scene_mask')
+        Load3dUtils.uploadTempImage(maskData, 'scene_mask'),
+        Load3dUtils.uploadTempImage(normalData, 'scene_normal')
       ])
 
       load3d.handleResize()
 
       return {
         image: `threed/${data.name} [temp]`,
-        mask: `threed/${dataMask.name} [temp]`
+        mask: `threed/${dataMask.name} [temp]`,
+        normal: `threed/${dataNormal.name} [temp]`
       }
     }
   }
@@ -275,7 +290,7 @@ app.registerExtension({
 app.registerExtension({
   name: 'Comfy.Preview3D',
 
-  async beforeRegisterNodeDef(nodeType, nodeData) {
+  async beforeRegisterNodeDef(_nodeType, nodeData) {
     if ('Preview3D' === nodeData.name) {
       // @ts-expect-error InputSpec is not typed correctly
       nodeData.input.required.image = ['PREVIEW_3D']
@@ -348,7 +363,7 @@ app.registerExtension({
 app.registerExtension({
   name: 'Comfy.Preview3DAnimation',
 
-  async beforeRegisterNodeDef(nodeType, nodeData) {
+  async beforeRegisterNodeDef(_nodeType, nodeData) {
     if ('Preview3DAnimation' === nodeData.name) {
       // @ts-expect-error InputSpec is not typed correctly
       nodeData.input.required.image = ['PREVIEW_3D_ANIMATION']

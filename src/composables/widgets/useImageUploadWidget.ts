@@ -9,7 +9,6 @@ import type { ResultItem } from '@/schemas/apiSchema'
 import type { InputSpec } from '@/schemas/nodeDefSchema'
 import type { ComfyWidgetConstructor } from '@/scripts/widgets'
 import { useNodeOutputStore } from '@/stores/imagePreviewStore'
-import type { ComfyApp } from '@/types'
 import { createAnnotatedPath } from '@/utils/formatUtil'
 import { addToComboValues } from '@/utils/litegraphUtil'
 
@@ -32,8 +31,7 @@ export const useImageUploadWidget = () => {
   const widgetConstructor: ComfyWidgetConstructor = (
     node: LGraphNode,
     inputName: string,
-    inputData: InputSpec,
-    app: ComfyApp
+    inputData: InputSpec
   ) => {
     const inputOptions = inputData[1] ?? {}
     const { imageInputName, allow_batch, image_folder = 'input' } = inputOptions
@@ -95,6 +93,7 @@ export const useImageUploadWidget = () => {
     // Add our own callback to the combo widget to render an image when it changes
     fileComboWidget.callback = function () {
       nodeOutputStore.setNodeOutputs(node, fileComboWidget.value)
+      node.graph?.setDirtyCanvas(true)
     }
 
     // On load if we have a value then render the image

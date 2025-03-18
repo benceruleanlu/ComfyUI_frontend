@@ -5,28 +5,11 @@
   >
     <template #tool-buttons>
       <Button
-        class="browse-templates-button"
-        icon="pi pi-th-large"
+        icon="pi pi-refresh"
+        @click="workflowStore.syncWorkflows()"
         severity="secondary"
-        v-tooltip.bottom="$t('sideToolbar.browseTemplates')"
         text
-        @click="() => commandStore.execute('Comfy.BrowseTemplates')"
-      />
-      <Button
-        class="open-workflow-button"
-        icon="pi pi-folder-open"
-        severity="secondary"
-        v-tooltip.bottom="$t('sideToolbar.openWorkflow')"
-        text
-        @click="() => commandStore.execute('Comfy.OpenWorkflow')"
-      />
-      <Button
-        class="new-blank-workflow-button"
-        icon="pi pi-plus"
-        severity="secondary"
-        v-tooltip.bottom="$t('sideToolbar.newBlankWorkflow')"
-        @click="() => commandStore.execute('Comfy.NewBlankWorkflow')"
-        text
+        v-tooltip.bottom="$t('g.refresh')"
       />
     </template>
     <template #header>
@@ -49,10 +32,9 @@
             class="ml-2"
           />
           <TreeExplorer
-            :roots="
-              renderTreeNode(openWorkflowsTree, WorkflowTreeType.Open).children
-            "
+            :root="renderTreeNode(openWorkflowsTree, WorkflowTreeType.Open)"
             :selectionKeys="selectionKeys"
+            v-model:expandedKeys="dummyExpandedKeys"
           >
             <template #node="{ node }">
               <TreeExplorerTreeNode :node="node">
@@ -87,13 +69,14 @@
             class="ml-2"
           />
           <TreeExplorer
-            :roots="
+            :root="
               renderTreeNode(
                 bookmarkedWorkflowsTree,
                 WorkflowTreeType.Bookmarks
-              ).children
+              )
             "
             :selectionKeys="selectionKeys"
+            v-model:expandedKeys="dummyExpandedKeys"
           >
             <template #node="{ node }">
               <WorkflowTreeLeaf :node="node" />
@@ -107,9 +90,7 @@
             class="ml-2"
           />
           <TreeExplorer
-            :roots="
-              renderTreeNode(workflowsTree, WorkflowTreeType.Browse).children
-            "
+            :root="renderTreeNode(workflowsTree, WorkflowTreeType.Browse)"
             v-model:expandedKeys="expandedKeys"
             :selectionKeys="selectionKeys"
             v-if="workflowStore.persistedWorkflows.length > 0"
@@ -128,9 +109,7 @@
       </div>
       <div class="comfyui-workflows-search-panel" v-else>
         <TreeExplorer
-          :roots="
-            renderTreeNode(filteredRoot, WorkflowTreeType.Browse).children
-          "
+          :root="renderTreeNode(filteredRoot, WorkflowTreeType.Browse)"
           v-model:expandedKeys="expandedKeys"
         >
           <template #node="{ node }">
@@ -159,7 +138,6 @@ import SidebarTabTemplate from '@/components/sidebar/tabs/SidebarTabTemplate.vue
 import WorkflowTreeLeaf from '@/components/sidebar/tabs/workflows/WorkflowTreeLeaf.vue'
 import { useTreeExpansion } from '@/composables/useTreeExpansion'
 import { useWorkflowService } from '@/services/workflowService'
-import { useCommandStore } from '@/stores/commandStore'
 import { useSettingStore } from '@/stores/settingStore'
 import {
   useWorkflowBookmarkStore,
@@ -197,13 +175,13 @@ const handleSearch = (query: string) => {
   })
 }
 
-const commandStore = useCommandStore()
 const workflowStore = useWorkflowStore()
 const workflowService = useWorkflowService()
 const workspaceStore = useWorkspaceStore()
 const { t } = useI18n()
 const expandedKeys = ref<Record<string, boolean>>({})
 const { expandNode, toggleNodeOnEvent } = useTreeExpansion(expandedKeys)
+const dummyExpandedKeys = ref<Record<string, boolean>>({})
 
 const handleCloseWorkflow = (workflow?: ComfyWorkflow) => {
   if (workflow) {

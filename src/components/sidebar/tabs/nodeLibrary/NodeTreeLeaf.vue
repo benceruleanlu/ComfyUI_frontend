@@ -66,10 +66,6 @@ const sidebarLocation = computed<'left' | 'right'>(() =>
   settingStore.get('Comfy.Sidebar.Location')
 )
 
-const emit = defineEmits<{
-  (e: 'toggle-bookmark', value: ComfyNodeDefImpl): void
-}>()
-
 const toggleBookmark = () => {
   nodeBookmarkStore.toggleBookmark(nodeDef.value)
 }
@@ -83,6 +79,8 @@ const nodePreviewStyle = ref<CSSProperties>({
 
 const handleNodeHover = async () => {
   const hoverTarget = nodeContentElement.value
+  if (!hoverTarget) return
+
   const targetRect = hoverTarget.getBoundingClientRect()
 
   const previewHeight = previewRef.value?.$el.offsetHeight || 0
@@ -111,7 +109,8 @@ const handleMouseLeave = () => {
   isHovered.value = false
 }
 onMounted(() => {
-  nodeContentElement.value = container.value?.closest('.p-tree-node-content')
+  nodeContentElement.value =
+    container.value?.closest('.p-tree-node-content') ?? null
   nodeContentElement.value?.addEventListener('mouseenter', handleMouseEnter)
   nodeContentElement.value?.addEventListener('mouseleave', handleMouseLeave)
 })

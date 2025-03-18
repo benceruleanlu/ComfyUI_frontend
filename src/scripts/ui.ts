@@ -92,7 +92,7 @@ export function $el<TTag extends string>(
   return element as ElementType<TTag>
 }
 
-function dragElement(dragEl, settings): () => void {
+function dragElement(dragEl): () => void {
   var posDiffX = 0,
     posDiffY = 0,
     posStartX = 0,
@@ -108,7 +108,7 @@ function dragElement(dragEl, settings): () => void {
   }
 
   // When the element resizes (e.g. view queue) ensure it is still in the windows bounds
-  const resizeObserver = new ResizeObserver(() => {
+  new ResizeObserver(() => {
     ensureInBounds()
   }).observe(dragEl)
 
@@ -640,7 +640,7 @@ export class ComfyUI {
     // Hide by default on construction so it does not interfere with other views.
     this.menuContainer.style.display = 'none'
 
-    this.restoreMenuPosition = dragElement(this.menuContainer, this.settings)
+    this.restoreMenuPosition = dragElement(this.menuContainer)
 
     // @ts-expect-error
     this.setStatus({ exec_info: { queue_remaining: 'X' } })

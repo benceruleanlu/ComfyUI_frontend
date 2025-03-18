@@ -188,6 +188,7 @@
     "reportSent": "보고서 제출됨",
     "reset": "재설정",
     "resetKeybindingsTooltip": "키 바인딩을 기본값으로 재설정",
+    "restart": "재시작",
     "resultsCount": "{count} 개의 결과를 찾았습니다",
     "save": "저장",
     "saving": "저장 중",
@@ -272,6 +273,7 @@
     "installLocationDescription": "ComfyUI의 사용자 데이터 디렉토리를 선택하십시오. 선택한 위치에 Python 환경이 설치됩니다. 선택한 디스크에 충분한 공간(~15GB)이 남아 있는지 확인하십시오.",
     "installLocationTooltip": "ComfyUI의 사용자 데이터 디렉토리. 저장소:\n- Python 환경\n- 모델\n- 사용자 정의 노드\n",
     "insufficientFreeSpace": "공간이 부족합니다 - 최소한의 여유 공간",
+    "isOneDrive": "OneDrive에 설치하면 문제가 발생할 수 있습니다. OneDrive가 아닌 위치에 설치하는 것을 강력히 권장합니다.",
     "manualConfiguration": {
       "createVenv": "다음 디렉토리에 가상 환경을 생성해야 합니다",
       "requirements": "요구 사항",
@@ -286,6 +288,7 @@
     "migrationOptional": "마이그레이션은 선택 사항입니다. 기존에 설치된 것이 없다면, 이 단계를 건너뛸 수 있습니다.",
     "migrationSourcePathDescription": "기존에 설치된 ComfyUI가 있으면, 기존 사용자 파일과 모델을 새 설치본으로 복사하거나 링크 할 수 있습니다. 기존의 ComfyUI 설치는 영향을 받지 않습니다.",
     "moreInfo": "더 많은 정보를 원하시면, 다음을 읽어주세요",
+    "nonDefaultDrive": "ComfyUI를 시스템 드라이브(예: C:\\)에 설치하십시오. 다른 파일 시스템을 가진 드라이브는 예측할 수 없는 문제를 일으킬 수 있습니다. 설치 후에는 모델 및 기타 파일을 다른 드라이브에 저장할 수 있습니다.",
     "parentMissing": "경로가 존재하지 않습니다 - 먼저 포함하는 디렉토리를 생성하세요",
     "pathExists": "디렉토리가 이미 존재합니다 - 모든 데이터를 백업했는지 확인해 주세요",
     "pathValidationFailed": "경로 유효성 검사 실패",
@@ -384,6 +387,7 @@
   },
   "manager": {
     "createdBy": "작성자",
+    "dependencies": "의존성",
     "discoverCommunityContent": "커뮤니티에서 만든 노드 팩, 확장 프로그램 등을 찾아보세요...",
     "downloads": "다운로드",
     "errorConnecting": "Comfy Node Registry에 연결하는 중 오류가 발생했습니다.",
@@ -392,6 +396,7 @@
       "enabled": "활성화",
       "nodePack": "노드 팩"
     },
+    "infoPanelEmpty": "정보를 보려면 항목을 클릭하세요",
     "installSelected": "선택한 항목 설치",
     "lastUpdated": "마지막 업데이트",
     "latestVersion": "최신",
@@ -403,6 +408,7 @@
     "nodePack": "노드 팩",
     "packsSelected": "선택한 팩",
     "repository": "저장소",
+    "restartToApplyChanges": "변경 사항을 적용하려면 ComfyUI를 재시작해 주세요",
     "searchPlaceholder": "검색",
     "selectVersion": "버전 선택",
     "sort": {
@@ -536,6 +542,7 @@
     "Toggle Logs Bottom Panel": "로그 하단 패널 전환",
     "Toggle Model Library Sidebar": "모델 라이브러리 사이드바 전환",
     "Toggle Node Library Sidebar": "노드 라이브러리 사이드바 전환",
+    "Toggle Progress Dialog": "진행 상황 대화 상자 전환",
     "Toggle Queue Sidebar": "실행 큐 사이드바 전환",
     "Toggle Search Box": "검색 상자 전환",
     "Toggle Terminal Bottom Panel": "터미널 하단 패널 전환",

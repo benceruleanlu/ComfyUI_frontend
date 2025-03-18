@@ -36,6 +36,10 @@ class Load3d {
   protected loaderManager: LoaderManager
   protected modelManager: ModelManager
 
+  STATUS_MOUSE_ON_NODE: boolean
+  STATUS_MOUSE_ON_SCENE: boolean
+  INITIAL_RENDER_DONE: boolean = false
+
   constructor(
     container: Element | HTMLElement,
     options: Load3DOptions = {
@@ -124,8 +128,38 @@ class Load3d {
       this.previewManager.init()
     }
 
+    this.STATUS_MOUSE_ON_NODE = false
+    this.STATUS_MOUSE_ON_SCENE = false
+
     this.handleResize()
     this.startAnimation()
+
+    setTimeout(() => {
+      this.forceRender()
+    }, 100)
+  }
+
+  forceRender(): void {
+    const delta = this.clock.getDelta()
+    this.viewHelperManager.update(delta)
+    this.controlsManager.update()
+
+    this.renderer.clear()
+    this.sceneManager.renderBackground()
+    this.renderer.render(
+      this.sceneManager.scene,
+      this.cameraManager.activeCamera
+    )
+
+    if (this.viewHelperManager.viewHelper.render) {
+      this.viewHelperManager.viewHelper.render(this.renderer)
+    }
+
+    if (this.previewManager.showPreview) {
+      this.previewManager.updatePreviewRender()
+    }
+
+    this.INITIAL_RENDER_DONE = true
   }
 
   private getActiveCamera(): THREE.Camera {
@@ -143,6 +177,10 @@ class Load3d {
   private startAnimation(): void {
     const animate = () => {
       this.animationFrameId = requestAnimationFrame(animate)
+
+      if (!this.isActive()) {
+        return
+      }
 
       if (this.previewManager.showPreview) {
         this.previewManager.updatePreviewRender()
@@ -167,12 +205,25 @@ class Load3d {
     animate()
   }
 
+  updateStatusMouseOnNode(onNode: boolean): void {
+    this.STATUS_MOUSE_ON_NODE = onNode
+  }
+
+  updateStatusMouseOnScene(onScene: boolean): void {
+    this.STATUS_MOUSE_ON_SCENE = onScene
+  }
+
+  isActive(): boolean {
+    return (
+      this.STATUS_MOUSE_ON_NODE ||
+      this.STATUS_MOUSE_ON_SCENE ||
+      !this.INITIAL_RENDER_DONE
+    )
+  }
+
   setBackgroundColor(color: string): void {
     this.sceneManager.setBackgroundColor(color)
-    this.renderer.render(
-      this.sceneManager.scene,
-      this.cameraManager.activeCamera
-    )
+    this.forceRender()
   }
 
   async setBackgroundImage(uploadPath: string): Promise<void> {
@@ -183,6 +234,8 @@ class Load3d {
         this.sceneManager.backgroundTexture
       )
     }
+
+    this.forceRender()
   }
 
   removeBackgroundImage(): void {
@@ -194,10 +247,13 @@ class Load3d {
     ) {
       this.previewManager.updateBackgroundTexture(null)
     }
+
+    this.forceRender()
   }
 
   toggleGrid(showGrid: boolean): void {
     this.sceneManager.toggleGrid(showGrid)
+    this.forceRender()
   }
 
   toggleCamera(cameraType?: 'perspective' | 'orthographic'): void {
@@ -207,6 +263,7 @@ class Load3d {
     this.viewHelperManager.recreateViewHelper()
 
     this.handleResize()
+    this.forceRender()
   }
 
   getCurrentCameraType(): 'perspective' | 'orthographic' {
@@ -219,6 +276,8 @@ class Load3d {
     if (this.previewManager.showPreview) {
       this.previewManager.syncWithMainCamera()
     }
+
+    this.forceRender()
   }
 
   getCameraState(): CameraState {
@@ -227,23 +286,17 @@ class Load3d {
 
   setFOV(fov: number): void {
     this.cameraManager.setFOV(fov)
-    this.renderer.render(
-      this.sceneManager.scene,
-      this.cameraManager.activeCamera
-    )
+    this.forceRender()
   }
 
   setEdgeThreshold(threshold: number): void {
     this.modelManager.setEdgeThreshold(threshold)
+    this.forceRender()
   }
 
   setMaterialMode(mode: MaterialMode): void {
     this.modelManager.setMaterialMode(mode)
-
-    this.renderer.render(
-      this.sceneManager.scene,
-      this.cameraManager.activeCamera
-    )
+    this.forceRender()
   }
 
   async loadModel(url: string, originalFileName?: string): Promise<void> {
@@ -254,31 +307,32 @@ class Load3d {
     await this.loaderManager.loadModel(url, originalFileName)
 
     this.handleResize()
+    this.forceRender()
   }
 
   clearModel(): void {
     this.modelManager.clearModel()
+    this.forceRender()
   }
 
   setUpDirection(direction: UpDirection): void {
     this.modelManager.setUpDirection(direction)
-
-    this.renderer.render(
-      this.sceneManager.scene,
-      this.cameraManager.activeCamera
-    )
+    this.forceRender()
   }
 
   setLightIntensity(intensity: number): void {
     this.lightingManager.setLightIntensity(intensity)
+    this.forceRender()
   }
 
   togglePreview(showPreview: boolean): void {
     this.previewManager.togglePreview(showPreview)
+    this.forceRender()
   }
 
   setTargetSize(width: number, height: number): void {
     this.previewManager.setTargetSize(width, height)
+    this.forceRender()
   }
 
   addEventListener(event: string, callback: (data?: any) => void): void {
@@ -291,6 +345,7 @@ class Load3d {
 
   refreshViewport(): void {
     this.handleResize()
+    this.forceRender()
   }
 
   handleResize(): void {
@@ -310,6 +365,7 @@ class Load3d {
     this.renderer.setSize(width, height)
 
     this.previewManager.handleResize()
+    this.forceRender()
   }
 
   captureScene(width: number, height: number): Promise<CaptureResult> {
