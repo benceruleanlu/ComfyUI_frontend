@@ -964,7 +964,7 @@ export const comfyPageFixture = base.extend<{
     const comfyPage = new ComfyPage(page, request)
 
     const { parallelIndex } = testInfo
-    const username = `playwright-test-${parallelIndex}`
+    const username = `playwright-test-${parallelIndex}-${Date.now()}`
     const userId = await comfyPage.setupUser(username)
     comfyPage.userIds[parallelIndex] = userId
 
