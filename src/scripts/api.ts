@@ -384,6 +384,7 @@ export class ComfyApi extends EventTarget {
    * The API key for the comfy org account if the user logged in via API key.
    */
   apiKey?: string
+  private queuePollIntervalId: ReturnType<typeof setInterval> | null = null
 
   constructor() {
     super()
@@ -628,7 +629,9 @@ export class ComfyApi extends EventTarget {
    * Poll status  for colab and other things that don't support websockets.
    */
   private _pollQueue() {
-    setInterval(async () => {
+    if (this.queuePollIntervalId !== null) return
+
+    this.queuePollIntervalId = setInterval(async () => {
       try {
         const resp = await this.fetchApi('/prompt')
         const status = (await resp.json()) as StatusWsMessageStatus
@@ -637,6 +640,13 @@ export class ComfyApi extends EventTarget {
         this.dispatchCustomEvent('status', null)
       }
     }, 1000)
+  }
+
+  private stopQueuePolling() {
+    if (this.queuePollIntervalId === null) return
+
+    clearInterval(this.queuePollIntervalId)
+    this.queuePollIntervalId = null
   }
 
   /**
@@ -686,6 +696,7 @@ export class ComfyApi extends EventTarget {
 
     this.socket.addEventListener('open', () => {
       opened = true
+      this.stopQueuePolling()
 
       // Send feature flags as the first message
       this.socket!.send(
